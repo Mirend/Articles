@@ -92,7 +92,14 @@ Install-Module AzureADPreview -verbose -allowclobber -Force
 5. Verify you see AzureAssessment, AssessmentPlatform AND AzureMonitorWindowsAgent
    ![](https://github.com/Cyberlorians/uploadedimages/blob/main/assessmentextension.png)
 
-6. Take note and if you see the extensions are out of date, STOP and update (select extensions what need updating and click update). Updates available will look like below, pay close attention to what version is available and use that number to replace the code below.
+6. If AzureMonitorWindowsAgent is missing (this can be seen from the Extensions blade on the VM), run the below command from the Azure Portal PowerShell and verify.
+
+   ![](https://github.com/Cyberlorians/uploadedimages/blob/main/amaassessment.png)
+```
+Connect-AzAccount -UseDeviceAuthentication
+Set-AzVMExtension -Name AzureMonitorWindowsAgent -ExtensionType AzureMonitorWindowsAgent -Publisher Microsoft.Azure.Monitor -ResourceGroupName Assessment -VMName Assessment -Location EastUS -TypeHandlerVersion 1.0 -EnableAutomaticUpgrade $true
+```
+7. Take note and if you see the extensions are out of date, STOP and update (select extensions what need updating and click update). Updates available will look like below, pay close attention to what version is available and use that number to replace the code below.
     ![](https://github.com/Cyberlorians/uploadedimages/blob/main/assessmentupdate2.png)
 
    EXAMPLE code is below, if you want/have to do manually. You must first uninstall the extension then install using Azure PowerShell CLI.
@@ -171,6 +178,7 @@ Add-AzureAssessmentTask -WorkingDirectory C:\Assessment\Entra -ScheduledTaskUser
 
 ## Verifying Data to the Log Analytics Workspace ##
 
+1. Run the following query from the Logs link within the Workspace:
 ```
 //Viewing Failed Recommendation Results
 AzureAssessmentRecommendation 
@@ -203,7 +211,7 @@ As of 11/7/2024, after upgrading the extensions to 4.5 and 1.9 there is a known 
 1. Copy the AzureAssessment.execpkg file from "C:\Packages\Plugins\Microsoft.ServicesHub.AzureAssessment\1.9\bin" to "C:\ODA\Packages"
 2. Proceed once confirmed you have copied this file. Again, COPY not CUT.
 
-6. Install the Azure Monitor Agent Extension on the newly created VM (this can be seen from the Extensions blade on the VM). Run the below command from the Azure Portal PowerShell and verify.
+3. Install the Azure Monitor Agent Extension on the newly created VM (this can be seen from the Extensions blade on the VM). Run the below command from the Azure Portal PowerShell and verify.
    
    **!!DO NOT MISS THIS STEP!!**
 
@@ -213,7 +221,9 @@ Connect-AzAccount -UseDeviceAuthentication
 Set-AzVMExtension -Name AzureMonitorWindowsAgent -ExtensionType AzureMonitorWindowsAgent -Publisher Microsoft.Azure.Monitor -ResourceGroupName Assessment -VMName Assessment -Location EastUS -TypeHandlerVersion 1.0 -EnableAutomaticUpgrade $true
 ```
 
+###### Michael Crane -- I guessed what the following is? There's no explanation for it. Is it a troubleshooting step or should it be a different category?
 ```
+//Run the following to remove the assessment when complete
 Clear-MicrosoftAssessmentsApplication -IncludeAADApplication $true
 ```
 </details>
